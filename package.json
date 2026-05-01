@@ -2,12 +2,9 @@
   "name": "baston-frontend",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
+  "build": "ng build --configuration production",
+  "start": "node server.js"
+},
   "private": true,
   "packageManager": "npm@11.6.2",
   "dependencies": {
@@ -18,6 +15,7 @@
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@types/leaflet": "^1.9.21",
+    "express": "^5.2.1",
     "leaflet": "^1.9.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -30,5 +28,19 @@
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
-  }
+  },
+  "description": "This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.8.",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alvaro-Pe/baston-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Alvaro-Pe/baston-frontend/issues"
+  },
+  "homepage": "https://github.com/Alvaro-Pe/baston-frontend#readme"
 }
