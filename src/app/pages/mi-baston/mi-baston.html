@@ -1,0 +1,266 @@
+<div class="shell">
+
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="logo-area">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L2 7v10l10 5 10-5V7z" opacity="0.6"/>
+          <path d="M12 15L2 10v4l10 5 10-5v-4z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="app-name">Mi Bastón</div>
+        <div class="app-sub">Panel de monitoreo</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="clock">{{ horaActual }}</div>
+      <button class="btn-exit" (click)="cerrarSesion()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        <span class="exit-label">Salir</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── MENSAJES ── -->
+  @if (mensajeExito) {
+    <div class="msg exito">{{ mensajeExito }}</div>
+  }
+  @if (mensajeError) {
+    <div class="msg error">{{ mensajeError }}</div>
+  }
+
+  <!-- ── LOADING ── -->
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Cargando tu bastón...</span>
+    </div>
+  }
+
+  <!-- ── SIN BASTÓN ── -->
+  @if (!loading && !baston) {
+    <div class="sin-baston">
+      <div class="sin-baston-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L2 7v10l10 5 10-5V7z"/>
+        </svg>
+      </div>
+      <h2>No tienes un bastón asignado</h2>
+      <p>Contacta al administrador para que te asigne uno</p>
+    </div>
+  }
+
+  <!-- ── CONTENIDO PRINCIPAL ── -->
+  @if (!loading && baston) {
+    <div class="content">
+
+      <!-- MAPA -->
+      <div class="map-area">
+        <div class="map-grid"></div>
+
+        @if (mapaUrl) {
+          <iframe class="map-frame" [src]="mapaUrl"></iframe>
+        } @else {
+          <div class="map-empty">
+            <div class="map-empty-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="10" r="3"/>
+                <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 00-16 0c0 3 2.7 7 8 11.7z"/>
+              </svg>
+            </div>
+            <span>Sin ubicación GPS aún</span>
+          </div>
+        }
+
+        <!-- Pin animado (solo cuando no hay mapa real) -->
+        @if (!mapaUrl) {
+          <div class="location-pin">
+            <div class="pin-pulse">
+              <div class="pin-inner">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2a7 7 0 017 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 017-7zm0 9.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Overlay nombre + estado -->
+        <div class="map-overlay">
+          <div class="baston-tag">{{ baston.nombre }}</div>
+          <div class="status-badge" [class.activo]="baston.estado === 'activo'">
+            {{ baston.estado }}
+          </div>
+        </div>
+
+        <!-- Coordenadas última lectura -->
+        @if (lecturasGps.length > 0) {
+          <div class="map-coords">
+            {{ lecturasGps[0].latitud | number:'1.4-4' }}°N,
+            {{ lecturasGps[0].longitud | number:'1.4-4' }}°W
+          </div>
+        }
+      </div>
+
+      <!-- ── PANEL DERECHO ── -->
+      <div class="side-panel">
+
+        <!-- DEVICE STATUS -->
+        <div class="card">
+          <div class="card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2"/>
+            </svg>
+            Device Status
+          </div>
+          <div class="device-status">
+            <div class="stat-box">
+              <div class="stat-box-label">Estado</div>
+              <div class="stat-box-val"
+                [style.color]="baston.estado === 'activo' ? 'var(--green)' : 'var(--red)'">
+                {{ baston.estado === 'activo' ? 'Activo' : 'Inactivo' }}
+              </div>
+              <div class="status-dot-row">
+                <div class="status-dot" [class.on]="baston.estado === 'activo'"></div>
+                <span class="status-dot-label">{{ baston.estado === 'activo' ? 'En línea' : 'Fuera de línea' }}</span>
+              </div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box-label">GPS</div>
+              <div class="stat-box-val"
+                [style.color]="lecturasGps.length > 0 ? 'var(--green)' : 'var(--text3)'">
+                {{ lecturasGps.length > 0 ? 'OK' : 'Sin señal' }}
+              </div>
+              <div class="signal-dots">
+                <div class="signal-dot" [class.on]="lecturasGps.length > 0" style="height:6px"></div>
+                <div class="signal-dot" [class.on]="lecturasGps.length > 0" style="height:10px"></div>
+                <div class="signal-dot" [class.on]="lecturasGps.length > 0" style="height:14px"></div>
+                <div class="signal-dot" [class.on]="lecturasGps.length > 1" style="height:18px"></div>
+                <div class="signal-dot" [class.on]="lecturasGps.length > 2" style="height:22px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION CENTER -->
+        <div class="card">
+          <div class="card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/>
+            </svg>
+            Action Center
+          </div>
+          <button class="btn-sonar" (click)="hacerSonar()" [disabled]="guardando">
+            <div class="sonar-ring-wrap">
+              <div class="sonar-ring"></div>
+              <div class="sonar-ring"></div>
+              <div class="sonar-ring"></div>
+              <div class="sonar-center">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 18v-6a9 9 0 0118 0v6"/>
+                  <path d="M21 19a2 2 0 01-2 2H5a2 2 0 01-2-2v-1a2 2 0 012-2h14a2 2 0 012 2v1z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="btn-sonar-label">
+              {{ guardando ? 'Enviando...' : 'HACER SONAR' }}
+            </div>
+          </button>
+
+         
+        </div>
+
+        <!-- SENSOR DE PROXIMIDAD -->
+        <div class="card">
+          <div class="card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            Sensor de proximidad
+          </div>
+
+          @if (lecturaDistancia) {
+            <div class="sensor-content">
+              <!-- Radar animado -->
+              <div class="radar-wrap">
+                <svg class="radar-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="40" cy="40" r="38"
+                    [attr.fill]="lecturaDistancia.valor > 50 ? 'rgba(74,222,128,0.05)' : 'rgba(248,113,113,0.05)'"
+                    [attr.stroke]="lecturaDistancia.valor > 50 ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.25)'"
+                    stroke-width="1"/>
+                  <circle cx="40" cy="40" r="25" fill="none"
+                    [attr.stroke]="lecturaDistancia.valor > 50 ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)'"
+                    stroke-width="1"/>
+                  <circle cx="40" cy="40" r="12" fill="none"
+                    [attr.stroke]="lecturaDistancia.valor > 50 ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'"
+                    stroke-width="1"/>
+                  <line x1="40" y1="2" x2="40" y2="78" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+                  <line x1="2" y1="40" x2="78" y2="40" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+                  <g class="radar-sweep">
+                    <path d="M40 40 L40 2 A38 38 0 0 1 75 58 Z"
+                      [attr.fill]="lecturaDistancia.valor > 50 ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)'"
+                      opacity="0.6"/>
+                  </g>
+                  <circle cx="40" cy="40" r="3"
+                    [attr.fill]="lecturaDistancia.valor > 50 ? '#4ade80' : '#f87171'"/>
+                </svg>
+              </div>
+              <!-- Valor -->
+              <div class="sensor-text">
+                <div>
+                  <span class="sensor-val"
+                    [style.color]="lecturaDistancia.valor > 50 ? 'var(--green)' : 'var(--red)'">
+                    {{ lecturaDistancia.valor }}
+                  </span>
+                  <span class="sensor-unit">cm</span>
+                </div>
+                <div class="sensor-status"
+                  [class.clear]="lecturaDistancia.valor > 50"
+                  [class.obstacle]="lecturaDistancia.valor <= 50">
+                  {{ lecturaDistancia.valor > 50 ? 'CAMINO DESPEJADO' : 'OBSTÁCULO DETECTADO' }}
+                </div>
+                <div class="sensor-date">{{ lecturaDistancia.fecha | date:'short' }}</div>
+              </div>
+            </div>
+          } @else {
+            <p class="empty-msg">Sin lecturas de distancia</p>
+          }
+        </div>
+
+        <!-- GPS HISTORIAL -->
+        <div class="card">
+          <div class="card-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="10" r="3"/>
+              <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 00-16 0c0 3 2.7 7 8 11.7z"/>
+            </svg>
+            Historial GPS
+          </div>
+
+          @if (lecturasGps.length === 0) {
+            <p class="empty-msg">Sin ubicaciones registradas</p>
+          }
+
+          <div class="gps-list">
+            @for (lectura of lecturasGps; track lectura.id) {
+              <div class="gps-row">
+                <div class="gps-dot"></div>
+                <div class="gps-coord">
+                  {{ lectura.latitud | number:'1.4-4' }}, {{ lectura.longitud | number:'1.4-4' }}
+                </div>
+                <div class="gps-time">{{ lectura.fecha | date:'short' }}</div>
+              </div>
+            }
+          </div>
+        </div>
+
+      </div><!-- /side-panel -->
+    </div><!-- /content -->
+  }
+
+</div>

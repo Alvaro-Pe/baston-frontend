@@ -1,0 +1,51 @@
+<div class="auditoria-page">
+  <div class="page-header">
+    <div>
+      <h1>
+        <svg class="icon-title" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z"/>
+        </svg>
+        Auditoría
+      </h1>
+      <p>Registro de acciones del sistema</p>
+    </div>
+  </div>
+
+  <div class="tabla-card">
+    <div class="filtro-container">
+      <div class="input-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" placeholder="Buscar por acción o descripción..." [(ngModel)]="filtro" (input)="filtrar()" />
+      </div>
+    </div>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Descripción</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (auditoriasFiltradas.length === 0) {
+          <tr><td colspan="5" class="empty">No hay registros de auditoría</td></tr>
+        }
+        @for (auditoria of auditoriasFiltradas; track auditoria.id) {
+          <tr>
+            <td>{{ auditoria.id }}</td>
+            <td>{{ auditoria.usuario_nombre }}</td>
+            <td><span class="badge-accion">{{ auditoria.accion }}</span></td>
+            <td>{{ auditoria.descripcion || 'Sin descripción' }}</td>
+            <td>{{ auditoria.fecha | date:'short' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

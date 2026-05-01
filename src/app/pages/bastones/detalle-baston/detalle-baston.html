@@ -1,0 +1,294 @@
+<div class="detalle-page">
+  <div class="page-header">
+    <button class="btn-volver" (click)="volver()">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      Volver
+    </button>
+    @if (baston) {
+      <div class="header-content">
+        <h1>
+          <svg class="icon-title" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7v10l10 5 10-5V7z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+          {{ baston.nombre }}
+        </h1>
+        <p>Detalle completo del bastón inteligente</p>
+      </div>
+      <span class="badge" [class.activo]="baston.estado === 'activo'">
+        {{ baston.estado }}
+      </span>
+    }
+  </div>
+
+  @if (mensajeExito) {
+    <div class="msg exito">
+      <svg class="msg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+      {{ mensajeExito }}
+    </div>
+  }
+  @if (mensajeError) {
+    <div class="msg error">
+      <svg class="msg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+      {{ mensajeError }}
+    </div>
+  }
+
+  @if (loading) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Cargando detalles...</p>
+    </div>
+  }
+
+  @if (!loading && baston) {
+    <div class="grid">
+      <!-- INFO GENERAL -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11H3v9a2 2 0 002 2h12a2 2 0 002-2v-9h-6m-6 0h6m0 0V9a2 2 0 012-2h2"/>
+            </svg>
+            Información general
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span>ID</span>
+            <strong>{{ baston.id }}</strong>
+          </div>
+          <div class="info-row">
+            <span>Nombre</span>
+            <strong>{{ baston.nombre }}</strong>
+          </div>
+          <div class="info-row">
+            <span>Estado</span>
+            <strong>{{ baston.estado }}</strong>
+          </div>
+          <div class="info-row">
+            <span>Usuario ID</span>
+            <strong>{{ baston.usuario_id }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- SENSOR GPS -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="10" r="3"/>
+              <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 00-16 0c0 3 2.7 7 8 11.7z"/>
+            </svg>
+            Sensor GPS
+          </h2>
+          @if (!baston.sensor_gps) {
+            <button class="btn-add" (click)="mostrarFormSensorGps = true; cd.detectChanges()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+          }
+        </div>
+        @if (baston.sensor_gps) {
+          <div class="card-body">
+            <div class="info-row"><span>Tipo</span><strong>{{ baston.sensor_gps.tipo }}</strong></div>
+            <div class="info-row"><span>ID</span><strong>{{ baston.sensor_gps.id }}</strong></div>
+          </div>
+          <div class="lecturas">
+            <h3>Lecturas recientes</h3>
+            @if (lecturasGps.length === 0) {
+              <p class="empty">Sin lecturas disponibles</p>
+            }
+            @for (lectura of lecturasGps; track lectura.id) {
+              <div class="lectura-row">
+                <span>
+                  <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  {{ lectura.latitud }}, {{ lectura.longitud }}
+                </span>
+                <span class="fecha">{{ lectura.fecha | date:'short' }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="card-body">
+            <p class="empty">No tiene sensor GPS configurado</p>
+          </div>
+        }
+
+        @if (mostrarFormSensorGps) {
+  <div class="form-section">
+    <input 
+      type="text" 
+      placeholder="Ej: NEO-6M" 
+      [(ngModel)]="sensorGpsForm.tipo" 
+    />
+    <div class="form-actions">
+      <button class="btn-cancelar" (click)="mostrarFormSensorGps = false">Cancelar</button>
+      <button class="btn-guardar" (click)="agregarSensorGps()" [disabled]="guardando">Guardar</button>
+    </div>
+  </div>
+}
+      </div>
+
+      <!-- SENSOR DISTANCIA -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Sensor Distancia
+          </h2>
+          @if (!baston.sensor_distancia) {
+            <button class="btn-add" (click)="mostrarFormSensorDistancia = true; cd.detectChanges()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </button>
+          }
+        </div>
+        @if (baston.sensor_distancia) {
+          <div class="card-body">
+            <div class="info-row"><span>Tipo</span><strong>{{ baston.sensor_distancia.tipo }}</strong></div>
+            <div class="info-row"><span>ID</span><strong>{{ baston.sensor_distancia.id }}</strong></div>
+          </div>
+          <div class="lecturas">
+            <h3>Lecturas recientes</h3>
+            @if (lecturasDistancia.length === 0) {
+              <p class="empty">Sin lecturas disponibles</p>
+            }
+            @for (lectura of lecturasDistancia; track lectura.id) {
+              <div class="lectura-row">
+                <span>
+                  <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+                  </svg>
+                  {{ lectura.valor }} cm
+                </span>
+                <span class="fecha">{{ lectura.fecha | date:'short' }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="card-body">
+            <p class="empty">No tiene sensor de distancia configurado</p>
+          </div>
+        }
+
+       @if (mostrarFormSensorDistancia) {
+  <div class="form-section">
+    <input 
+      type="text" 
+      placeholder="Ej: HC-SR04" 
+      [(ngModel)]="sensorDistanciaForm.tipo" 
+    />
+    <div class="form-actions">
+      <button class="btn-cancelar" (click)="mostrarFormSensorDistancia = false">Cancelar</button>
+      <button class="btn-guardar" (click)="agregarSensorDistancia()" [disabled]="guardando">Guardar</button>
+    </div>
+  </div>
+}
+      </div>
+
+      <!-- BUZZER -->
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+              <line x1="9" y1="9" x2="9.01" y2="9"/>
+              <line x1="15" y1="9" x2="15.01" y2="9"/>
+            </svg>
+            Buzzer
+          </h2>
+        </div>
+        <div class="card-body">
+          @if (buzzer) {
+            <div class="info-row">
+              <span>Estado</span>
+              <span class="badge" [class.activo]="buzzer.estado === 'activo'">
+                {{ buzzer.estado }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span>Última actualización</span>
+              <strong>{{ buzzer.ultima_actualizacion | date:'short' }}</strong>
+            </div>
+          } @else {
+            <p class="empty">Sin datos del buzzer disponibles</p>
+          }
+        </div>
+      </div>
+
+      <!-- COMANDOS -->
+      <div class="card full-width">
+        <div class="card-header">
+          <h2>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 15l-2 2L9 13m0 0l-2-2 2-2 4 4"/>
+              <path d="M17 8a4 4 0 11-8 0 4 4 0 018 0z"/>
+              <path d="M6 2h12a1 1 0 01.7 1.7l-6 6a1 1 0 01-.7-.3l-4-4a1 1 0 01-.3-.7V2z"/>
+            </svg>
+            Comandos
+          </h2>
+          <button class="btn-add" (click)="mostrarFormComando = true; cd.detectChanges()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </button>
+        </div>
+        @if (mostrarFormComando) {
+  <div class="form-section"> <!-- QUITA el <form> y #comandoForm -->
+    <div class="form-group">
+      <label>Tipo de comando</label>
+      <select [(ngModel)]="nuevoComando.tipo"> <!-- QUITA name="tipo" required -->
+        <option value="">Seleccionar comando</option>
+        <option value="BUZZER_ON">Encender buzzer</option>
+        <option value="BUZZER_OFF">Apagar buzzer</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancelar" (click)="mostrarFormComando = false">Cancelar</button>
+      <button class="btn-guardar" (click)="enviarComando()" [disabled]="guardando">
+        {{ guardando ? 'Enviando...' : 'Enviar' }}
+      </button>
+    </div>
+  </div>
+}
+        <div class="card-body">
+          @if (comandos.length === 0) {
+            <p class="empty">Sin comandos enviados</p>
+          }
+          @for (comando of comandos; track comando.id) {
+            <div class="lectura-row">
+              <span>
+                <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37z"/>
+                  <path d="M12 12a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                {{ comando.tipo }}
+              </span>
+              <span class="fecha">{{ comando.fecha_envio | date:'short' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,288 @@
+<div class="usuarios-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Usuarios</h1>
+        <p>Gestión de usuarios registrados en el sistema</p>
+      </div>
+    </div>
+    <button class="btn-agregar" (click)="abrirFormulario()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Agregar usuario
+    </button>
+  </div>
+
+  <!-- Tabla Card -->
+  <div class="tabla-card">
+    <div class="controles">
+      <div class="search-container">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          placeholder="Buscar por nombre o usuario" 
+          [(ngModel)]="filtro" 
+          (input)="aplicarFiltros()" 
+        />
+      </div>
+      <div class="filtro-estado">
+        <button [class.active]="filtroEstado === 'todos'" (click)="filtroEstado = 'todos'; aplicarFiltros()">
+          Todos
+        </button>
+        <button [class.active]="filtroEstado === 'activo'" (click)="filtroEstado = 'activo'; aplicarFiltros()">
+          Activos
+        </button>
+        <button [class.active]="filtroEstado === 'inactivo'" (click)="filtroEstado = 'inactivo'; aplicarFiltros()">
+          Inactivos
+        </button>
+      </div>
+    </div>
+
+    <div class="tabla-container">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (usuariosFiltrados.length === 0) {
+            <tr>
+              <td colspan="7" class="empty">
+                <div class="empty-state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                  </svg>
+                  <p>No hay usuarios registrados</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (usuario of usuariosFiltrados; track usuario.id) {
+            <tr>
+              <td>{{ usuario.id }}</td>
+              <td>
+                <div class="usuario-info">
+                  <div class="avatar">{{ usuario.first_name?.charAt(0) || usuario.username?.charAt(0) }}</div>
+                  <span>{{ usuario.username }}</span>
+                </div>
+              </td>
+              <td>{{ usuario.first_name }} {{ usuario.last_name }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>
+                @if (usuario.roles && usuario.roles.length > 0) {
+                  <span class="badge rol">{{ usuario.roles[0] }}</span>
+                } @else {
+                  <span class="badge sin-rol">Sin rol</span>
+                }
+              </td>
+              <td>
+                <span class="badge" [class.activo]="usuario.is_active" [class.inactivo]="!usuario.is_active">
+                  {{ usuario.is_active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <button class="btn-ver" (click)="abrirEditar(usuario)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon-small">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                  Editar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar -->
+@if (mostrarFormulario) {
+  <div class="modal-overlay" (click)="cerrarFormulario()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-header-content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="modal-icon">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <h2>Agregar usuario</h2>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarFormulario()" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </button>
+      </div>
+
+      @if (mensajeExito) {
+        <div class="exito-msg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="msg-icon">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22,4 12,14.01 9,11.01"></polyline>
+          </svg>
+          {{ mensajeExito }}
+        </div>
+      }
+      @if (mensajeError) {
+        <div class="error-msg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="msg-icon">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          {{ mensajeError }}
+        </div>
+      }
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Username <span class="required">*</span></label>
+          <input type="text" placeholder="Ej: juan123" [(ngModel)]="nuevoUsuario.username" />
+        </div>
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" placeholder="Ej: Juan" [(ngModel)]="nuevoUsuario.first_name" />
+        </div>
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" placeholder="Ej: Pérez" [(ngModel)]="nuevoUsuario.last_name" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="Ej: juan@gmail.com" [(ngModel)]="nuevoUsuario.email" />
+        </div>
+        <div class="form-group">
+          <label>Contraseña <span class="required">*</span></label>
+          <input type="password" placeholder="Contraseña" [(ngModel)]="nuevoUsuario.password" />
+        </div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select [(ngModel)]="nuevoUsuario.rol_id">
+            <option value="">Sin rol</option>
+            @for (rol of roles; track rol.id) {
+              <option [value]="rol.id">{{ rol.nombre }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancelar" (click)="cerrarFormulario()">Cancelar</button>
+        <button class="btn-guardar" (click)="guardarUsuario()" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar usuario' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal Editar - VERSIÓN CORREGIDA -->
+@if (mostrarEditar) {
+  <div class="modal-overlay" (click)="cerrarEditar()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-header-content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="modal-icon">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <h2>Editar usuario</h2>
+        </div>
+        <button class="btn-cerrar" (click)="cerrarEditar()" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mensajes con timeout automático -->
+      @if (mensajeExito && !guardando) {
+        <div class="exito-msg" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="msg-icon">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22,4 12,14.01 9,11.01"></polyline>
+          </svg>
+          {{ mensajeExito }}
+        </div>
+      }
+      @if (mensajeError && !guardando) {
+        <div class="error-msg" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="msg-icon">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          {{ mensajeError }}
+        </div>
+      }
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="usuarioEditForm.first_name" />
+        </div>
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" [(ngModel)]="usuarioEditForm.last_name" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="usuarioEditForm.email" />
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select [(ngModel)]="usuarioEditForm.is_active">
+            <option [value]="true">Activo</option>
+            <option [value]="false">Inactivo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select [(ngModel)]="usuarioEditForm.rol_id">
+            <option value="">Sin cambiar</option>
+            @for (rol of roles; track rol.id) {
+              <option [value]="rol.id">{{ rol.nombre }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancelar" (click)="cerrarEditar()" [disabled]="guardando">
+          Cancelar
+        </button>
+        <button class="btn-guardar" (click)="guardarEdicion()" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

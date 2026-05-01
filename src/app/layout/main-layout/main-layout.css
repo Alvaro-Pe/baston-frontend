@@ -1,0 +1,20 @@
+.main-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.main-content {
+  margin-left: 250px;
+  flex: 1;
+  background: #f0f4ff;
+  overflow-y: auto;
+  padding: 30px;
+}
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0; /* ✅ el sidebar flota encima, no empuja */
+    padding: 16px;
+    padding-top: 60px; /* espacio para el botón hamburguesa */
+  }
+}
