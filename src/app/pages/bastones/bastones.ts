@@ -29,7 +29,7 @@ export class Bastones implements OnInit {
   usuario_id: ''
 };
 
-  private apiUrl = 'https://finalbaston-production.up.railway.app';
+  private apiUrl = 'https://baston-iot-backend.onrender.com';
 
 constructor(
   private http: HttpClient,

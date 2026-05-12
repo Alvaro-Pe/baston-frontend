@@ -16,7 +16,7 @@ export class Dashboard implements OnInit {
   totalBastones = 0;
   totalUsuarios = 0;
 
-  private apiUrl = 'https://finalbaston-production.up.railway.app';
+  private apiUrl = 'https://baston-iot-backend.onrender.com';
 
   constructor(
     private http: HttpClient,

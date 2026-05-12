@@ -33,7 +33,7 @@ export class DetalleBaston implements OnInit {
   mensajeExito = '';
   mensajeError = '';
 
-  private apiUrl = 'https://finalbaston-production.up.railway.app';
+  private apiUrl = 'https://baston-iot-backend.onrender.com';
   private bastonId: number = 0;
 
   constructor(

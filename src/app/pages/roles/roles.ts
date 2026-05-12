@@ -17,7 +17,7 @@ type TabVista = 'roles' | 'recursos' | 'usuariosRoles' | 'permisos';
 export class Roles implements OnInit {
 
   tabActiva: TabVista = 'roles';
-  private apiUrl = 'https://finalbaston-production.up.railway.app';
+  private apiUrl = 'https://baston-iot-backend.onrender.com';
 
   roles: any[] = [];
   recursos: any[] = [];

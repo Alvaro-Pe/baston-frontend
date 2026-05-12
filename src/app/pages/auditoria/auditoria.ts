@@ -17,7 +17,7 @@ export class Auditoria implements OnInit {
   auditorias: any[] = [];
   auditoriasFiltradas: any[] = [];
   filtro = '';
-  private apiUrl = 'https://finalbaston-production.up.railway.app';
+  private apiUrl = 'https://baston-iot-backend.onrender.com';
 
   constructor(
     private http: HttpClient,

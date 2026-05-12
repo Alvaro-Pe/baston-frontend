@@ -33,7 +33,7 @@ export class Usuarios implements OnInit {
     rol_id: ''
   };
 
-  private apiUrl = 'https://finalbaston-production.up.railway.app';
+  private apiUrl = 'https://baston-iot-backend.onrender.com';
 
   constructor(
     private http: HttpClient,

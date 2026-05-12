@@ -27,7 +27,7 @@ export class MiBaston implements OnInit, AfterViewInit, OnDestroy {
   guardando = false;
 
   mapaUrl: any = null;
-  private apiUrl = 'https://finalbaston-production.up.railway.app';
+  private apiUrl = 'https://baston-iot-backend.onrender.com';
   private horaInterval: any;
 
   constructor(
