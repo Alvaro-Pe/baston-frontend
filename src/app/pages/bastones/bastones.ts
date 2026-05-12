@@ -111,6 +111,7 @@ guardarBaston() {
         this.mensajeExito = '✅ Bastón creado exitosamente';
         this.cd.detectChanges();
         this.cargarBastones();
+         this.cargarUsuarios();
         setTimeout(() => {
           this.cerrarFormulario();
           this.cd.detectChanges();
