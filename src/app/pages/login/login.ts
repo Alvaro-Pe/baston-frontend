@@ -25,34 +25,34 @@ export class Login {
      private storage: StorageService
   ) {}
 
-  iniciarSesion() {
+ iniciarSesion() {
   this.error = '';
   this.exito = '';
   this.cargando = true;
 
   this.authService.login(this.username, this.password).subscribe({
     next: () => {
-      // obtener perfil del usuario
       this.authService.obtenerPerfil().subscribe({
         next: (perfil) => {
           this.storage.setUsuario(perfil);
-          this.cargando = false;
-          this.exito = '✅ Credenciales correctas, ingresando...';
-          this.cd.detectChanges();
+          const rol = this.storage.getRol();
 
-          setTimeout(() => {
-  const rol = this.storage.getRol();
-  if (rol === 'admin' || rol === 'administrador') {
-    this.router.navigate(['/dashboard']);
-  } else if (rol === 'usuario') {
-    this.router.navigate(['/mi-baston']);
-  } else {
-    this.cargando = false;
-    this.storage.clear();
-    this.error = '❌ Tu cuenta no tiene un rol asignado. Contacta al administrador.';
-    this.cd.detectChanges();
-  }
-}, 1500);
+          if (rol === 'admin' || rol === 'administrador') {
+            this.exito = '✅ Credenciales correctas, ingresando...';
+            this.cargando = false;
+            this.cd.detectChanges();
+            setTimeout(() => this.router.navigate(['/dashboard']), 1500);
+          } else if (rol === 'usuario') {
+            this.exito = '✅ Credenciales correctas, ingresando...';
+            this.cargando = false;
+            this.cd.detectChanges();
+            setTimeout(() => this.router.navigate(['/mi-baston']), 1500);
+          } else {
+            this.storage.clear();
+            this.cargando = false;
+            this.error = '❌ Tu cuenta no tiene rol asignado. Contacta al administrador.';
+            this.cd.detectChanges();
+          }
         },
         error: () => {
           this.cargando = false;
