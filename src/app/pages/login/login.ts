@@ -41,13 +41,18 @@ export class Login {
           this.cd.detectChanges();
 
           setTimeout(() => {
-            const rol = this.storage.getRol();
-            if (rol === 'admin') {
-              this.router.navigate(['/dashboard']);
-            } else {
-              this.router.navigate(['/mi-baston']);
-            }
-          }, 1500);
+  const rol = this.storage.getRol();
+  if (rol === 'admin' || rol === 'administrador') {
+    this.router.navigate(['/dashboard']);
+  } else if (rol === 'usuario') {
+    this.router.navigate(['/mi-baston']);
+  } else {
+    this.cargando = false;
+    this.storage.clear();
+    this.error = '❌ Tu cuenta no tiene un rol asignado. Contacta al administrador.';
+    this.cd.detectChanges();
+  }
+}, 1500);
         },
         error: () => {
           this.cargando = false;
