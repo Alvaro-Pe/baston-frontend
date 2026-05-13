@@ -348,3 +348,16 @@ body {
     margin-bottom: 16px;
   }
 }
+
+.btn-olvide {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: #72c5e8;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  text-decoration: underline;
+}

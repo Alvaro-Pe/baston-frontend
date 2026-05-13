@@ -12,10 +12,14 @@ import { authGuard } from './core/guards/auth-guard';
 import { MiBaston } from './pages/mi-baston/mi-baston';
 import { adminGuard } from './core/guards/admin-guard';
 import { userGuard } from './core/guards/user-guard';
+import { ResetPassword } from './pages/reset-password/reset-password';
+import { ForgotPassword } from './pages/forgot-password/forgot-password';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
+  { path: 'forgot-password', component: ForgotPassword },
+{ path: 'reset-password', component: ResetPassword },
   {
     path: '',
     component: MainLayout,

@@ -68,4 +68,8 @@ export class Login {
     }
   });
 }
+
+irAOlvidePassword() {
+  this.router.navigate(['/forgot-password']);
+}
 }
