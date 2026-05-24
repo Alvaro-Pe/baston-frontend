@@ -168,6 +168,7 @@ usuarioEditForm = {
   last_name: '',
   email: '',
   is_active: true,
+  celular: '',
   rol_id: ''
 };
 
@@ -178,6 +179,7 @@ abrirEditar(usuario: any) {
     last_name: usuario.last_name || '',
     email: usuario.email || '',
     is_active: usuario.is_active,
+    celular: usuario.celular || '',
     rol_id: ''
   };
   this.mostrarEditar = true;

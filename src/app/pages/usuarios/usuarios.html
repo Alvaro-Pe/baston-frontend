@@ -262,6 +262,10 @@
           <input type="email" [(ngModel)]="usuarioEditForm.email" />
         </div>
         <div class="form-group">
+  <label>Celular</label>
+  <input type="text" placeholder="Ej: 3001234567" [(ngModel)]="usuarioEditForm.celular" />
+</div>
+        <div class="form-group">
           <label>Estado</label>
           <select [(ngModel)]="usuarioEditForm.is_active">
             <option [value]="true">Activo</option>
