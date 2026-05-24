@@ -30,6 +30,7 @@ export class Usuarios implements OnInit {
     last_name: '',
     email: '',
     password: '',
+    celular: '',
     rol_id: ''
   };
 
@@ -105,7 +106,7 @@ export class Usuarios implements OnInit {
     this.mostrarFormulario = false;
     this.mensajeExito = '';
     this.mensajeError = '';
-    this.nuevoUsuario = { username: '', first_name: '', last_name: '', email: '', password: '', rol_id: '' };
+    this.nuevoUsuario = { username: '', first_name: '', last_name: '', email: '', password: '', celular: '', rol_id: '' };
     this.cd.detectChanges();
   }
 
